@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Kalkulator wynagrodzeń</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Kalkulator wynagrodzeń</h1>
+      <div class="contentContainer">
+        <form action="">
+          <label for="brutto">Podaj kwotę brutto:</label>
+          <div class="inputContainer">
+            <input
+              type="text"
+              inputmode="decimal"
+              name="brutto"
+              id="brutto"
+              step="0.01"
+              class="brutto"
+            />
+            <div class="inputUnit">zł</div>
+          </div>
+          <button type="submit" id="submit">Oblicz</button>
+        </form>
+        <div class="screenContainer">
+          <label for="screen">Kwota netto:</label>
+          <div class="screen" id="screen">
+            <div class="value">0.00</div>
+            <div class="unit">zł</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const valueinput = document.getElementById("brutto");
+
+      valueinput.addEventListener("input", (event) => {
+        let value = event.target.value;
+
+        // Sprawdzenie separatora: przecinek czy kropka
+        const separator = value.includes(",") ? "," : ".";
+
+        // Zamiana przecinka na kropkę do obliczeń
+        const standardizedValue = value.replace(",", ".");
+
+        if (standardizedValue.includes(".")) {
+          const [integerPart, decimalPart] = standardizedValue.split(".");
+          if (decimalPart && decimalPart.length > 2) {
+            // Przycięcie części dziesiętnej do 2 miejsc
+            const truncatedDecimal = decimalPart.slice(0, 2);
+            value = `${integerPart}${separator}${truncatedDecimal}`;
+          }
+        }
+
+        // Aktualizacja wartości w polu
+        event.target.value = value;
+      });
+
+      document.getElementById("submit").addEventListener("click", (e) => {
+        e.preventDefault();
+        const inputField = document.getElementById("brutto");
+        let value = inputField.value;
+
+        // Zamień przecinek na kropkę przed konwersją do liczby
+        value = value.replace(",", ".");
+        const input = parseFloat(value);
+
+        const screen = document.querySelector(".value");
+
+        // Oblicz nettoValue
+        const nettoValue = Math.floor(input * 0.8629 * 0.91 * 100) / 100;
+
+        // Wyświetl wynik lub 0.00, jeśli wartość jest niepoprawna
+        if (isNaN(nettoValue)) {
+          screen.innerHTML = "0.00";
+        } else {
+          screen.innerHTML = nettoValue; // Ograniczenie do 2 miejsc po przecinku
+        }
+      });
+    </script>
+  </body>
+</html>
